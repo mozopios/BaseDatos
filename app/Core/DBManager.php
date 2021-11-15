@@ -1,14 +1,17 @@
 <?php
 namespace Com\Daw2\Core;
 
+use \PDO;
 class DBManager
 {
   // Contenedor de la instancia de la Clase
   private static $instance;
-  private PDO $db;
+  private $db;
   //Previene creacion de objetos via new
+  
   private function __construct() { }
   // Única forma para obtener el objeto singleton
+  
   public static function getInstance ()
   {
     if ( is_null ( self::$instance) ) {
@@ -16,19 +19,26 @@ class DBManager
     }
     return self::$instance;
   }
-  public function getConnection () : PDO {
+  
+  public function getConnection (){
     if (is_null($this->db)) {
-      $config = Config::getInstance();
-      $host = $config->get('dbhost');
-      $dbname = $config->get('dbname');
-      $dbuser = $config->get('dbuser');
-      $dbpass = $config->get('dbpass');
-      /*$this->db = new PDO("mysql:host=$host;dbname=$dbname",
-                         $dbuser, $dbpass);
-      $this->db->setAttribute(PDO::ATTR_ERRMODE,
-                        PDO::ERRMODE_EXCEPTION);
-      $this->db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,
-                        PDO::FETCH_ASSOC);*/
+        $config = Config::getInstance();
+        $host = $config->get('dbhost');
+        $dbname = $config->get('dbname');
+        $dbuser = $config->get('dbuser');
+        $dbpass = $config->get('dbpass');
+        $charset = $config->get('dbcharset');
+        $options = [
+          PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+          PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+        try{
+            $this->db = new PDO("mysql:host=$host;dbname=$dbname;charset=$charset",
+                           $dbuser, $dbpass, $options);
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
     }
     return $this->db;
  }
