@@ -18,16 +18,16 @@ class Usuario {
     private $salarioBruto;
     private $retencionIRPF;
     
-    public function __construct(){}        
+    public function __construct(){  }        
     
-    public function __get($key){
+    /*public function __get($key){
         if(isset($this->values[ $key ])){
             return $this->values[ $key ];
         }
         else{
             throw new \Exception("Propiedad no válida");
         }
-    }
+    }*/
     
     public function getSalarioNeto(){
         return $this->salarioBruto * ( 1 - $this->retencionIRPF / 100);
