@@ -1,18 +1,31 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 namespace Com\Daw2\Models;
 
 use \PDO;
 /**
- * Description of TestModel
+ * Diferentes test sobre la base de datos
  *
- * @author rafa
+ * @author Rafael González Centeno
  */
 class TestModel extends \Com\Daw2\Core\BaseModel{
     
@@ -50,6 +63,23 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $query->bindValue(':page', (int)$page, PDO::PARAM_INT);
         $query->bindValue(':entries', (int)$entries, PDO::PARAM_INT); 
         $query->execute();
+        return $query->fetchAll();
+    }
+    
+    public function getUsuariosByActive(bool $active) : array{   
+        $query = $this->db->prepare("Select * FROM usuarios WHERE activo = :active ORDER BY username");        
+        
+        $query2 = $this->db->prepare("Select * FROM usuarios WHERE username LIKE '%:username%'"); /* Erróneo */
+        $query2->execute(['username' => 'rafa']);
+        
+        $query3 = $this->db->prepare("Select * FROM usuarios WHERE username IN :lista_usuarios"); /* Erróneo */
+        $lista = ['Pepito', 'Pedro', 'Manolo'];
+        $query3->execute(['lista_usuarios' => implode(",", $lista)]);
+        
+        $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
+        /* Podemos usar bindValue y no poner parámetros en execute o poner directamente los parámetros en execute */
+        //$query->bindValue(':active', $active, PDO::PARAM_BOOL);
+        $query->execute(['active' => $active]);
         return $query->fetchAll();
     }
     
