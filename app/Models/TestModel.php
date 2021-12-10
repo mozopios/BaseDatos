@@ -83,6 +83,24 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         return $query->fetchAll();
     }
     
+    public function getUsuarioOrderBy(string $field, $asc = true) : array{
+        //Lista blanca
+        $_orders = ['username', 'rol'];
+        //Comprobamos que el campo que solicita el usuario para ordenar está en la lista blanca
+        if(in_array($field, $_orders)){
+            $orderBy = $field;
+        }
+        else{
+            $orderBy = 'username';
+        }
+        $direction = $asc ? 'ASC' : 'DESC';
+        //Como hemos filtrado, podemos estar seguros de que no va a hacer nada para lo que no esté autorizado
+        $query = $this->db->prepare("Select * FROM usuarios ORDER BY $field $direction");   
+        $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
+        $query->execute();
+        return $query->fetchAll();
+    }
+    
     public function rellenarAleatorio() : int{
         $nombre = ["Carlos", "Miguel", "Iván", "Benjamín", "Francisco", "Erik", "Alexis Jose", "Marcos", "Cristopher", "Mauricio", "Jose Simon", "Nuria Maria"];
         $apellido1 = ["Alvarez", "Candeira", "Casas", "Dominguez", "Fernandez", "Ferreira", "Giraldez", "Gonzalez", "Juncal", "Montes", "Sanchez", "da Silva", "Suarez"];

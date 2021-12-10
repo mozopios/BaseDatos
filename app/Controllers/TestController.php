@@ -84,6 +84,26 @@ class TestController extends \Com\Daw2\Core\BaseController{
         $this->view->showViews(array('templates/header.view.php', 'test.view.php', 'templates/footer.view.php'), $_vars);
     }
     
+    public function testOrderBy(){
+        if(isset($_GET['asc'])){
+            $aux = filter_var($_GET['asc'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if(!is_null($aux)){
+                $asc = $aux;
+            }   
+            else{
+                $asc = true;
+            }            
+        }
+        else{
+            $asc = true;
+        }
+        $order = isset($_GET['order']) ? $_GET['order'] : "";                    
+        $_vars = array('titulo' => 'Test Order: ' . $order . ' ' . ( $asc ? 'ASC' : 'DESC'));
+        $model = new \Com\Daw2\Models\TestModel();
+        $_vars['usuarios'] = $model->getUsuarioOrderBy($order, $asc);
+        $this->view->showViews(array('templates/header.view.php', 'test.view.php', 'templates/footer.view.php'), $_vars);
+    }
+    
     public function rellenarAleatorio(){
         $_vars = array('titulo' => 'Test Limit Bind');
         $model = new \Com\Daw2\Models\TestModel();
