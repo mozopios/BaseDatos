@@ -95,7 +95,8 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         }
         $direction = $asc ? 'ASC' : 'DESC';
         //Como hemos filtrado, podemos estar seguros de que no va a hacer nada para lo que no esté autorizado
-        $query = $this->db->prepare("Select * FROM usuarios ORDER BY $field $direction");   
+        
+        $query = $this->db->prepare("Select * FROM usuarios ORDER BY $orderBy $direction");   
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->execute();
         return $query->fetchAll();
@@ -105,11 +106,14 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $nombre = ["Carlos", "Miguel", "Iván", "Benjamín", "Francisco", "Erik", "Alexis Jose", "Marcos", "Cristopher", "Mauricio", "Jose Simon", "Nuria Maria"];
         $apellido1 = ["Alvarez", "Candeira", "Casas", "Dominguez", "Fernandez", "Ferreira", "Giraldez", "Gonzalez", "Juncal", "Montes", "Sanchez", "da Silva", "Suarez"];
         $apellido2 = ["Sanchez", "Carrera", "Cerqueira", "Fernandez", "Araujo", "Oset", "Groba", "Pereira", "Abeledo", "Iglesias", "Gonzalez", "Vilas"];
+        $_roles = ["administrador", "facturas", "gestor", "ventas", "standard"];
         $insertado = 0;
-        for($i = 0; $i < 100; $i++){
-            $query = $this->db->prepare("INSERT INTO usuarios (username, rol, salarioBruto, retencionIRPF) values (:username, 'standard', :bruto, :irpf)");
+        //Si no estuviera emulated = off el prepare debería ir dentro del for
+        $query = $this->db->prepare("INSERT INTO usuarios (username, rol, salarioBruto, retencionIRPF) values (:username, :rol, :bruto, :irpf)");
+        for($i = 0; $i < 100; $i++){            
             $username = $nombre[random_int(0, count($nombre) -1)].'_'.$apellido1[random_int(0, count($apellido1) -1)].'_'.$apellido2[random_int(0, count($apellido2) -1)];
             $username = preg_replace("/[^A-Za-z_]/", "_", $username);
+            $rol = $_roles[random_int(0, 4)];
             $salario = random_int(1000, 5000);
             if($salario < 3000){
                 $irpf = 18;
@@ -124,6 +128,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
                 $query->execute(
                         [
                             'username'  => $username,
+                            'rol'       => $rol,
                             'bruto'     => $salario,
                             'irpf'      => $irpf
                         ]
