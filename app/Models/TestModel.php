@@ -115,15 +115,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
             $username = preg_replace("/[^A-Za-z_]/", "_", $username);
             $rol = $_roles[random_int(0, 4)];
             $salario = random_int(1000, 5000);
-            if($salario < 3000){
-                $irpf = 18;
-            }
-            elseif($salario < 4000){
-                $irpf = 20;
-            }
-            else{
-                $irpf = 30;
-            }
+            $irpf = self::calcularIRPF($salario);
             try{
                 $query->execute(
                         [
@@ -141,5 +133,32 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
             
         }
         return $insertado;
+    }
+    
+    private static function calcularIRPF(float $salario){
+        if($salario < 3000){
+            $irpf = 18;
+        }
+        elseif($salario < 4000){
+            $irpf = 20;
+        }
+        else{
+            $irpf = 30;
+        }
+        return $irpf;
+    }
+    
+    public function updateSalarUsuario(string $usuario, float $salar) : int{
+        $irpf = self::calcularIRPF($salar);
+        $stmt = $this->db->prepare("UPDATE usuarios SET salarioBruto = :salarioBruto, retencionIRPF = :retencionIRPF WHERE username = :username");
+        $stmt->execute(['salarioBruto' => $salar, 'retencionIRPF' => $irpf, 'username' => $usuario]);
+        return $stmt->rowCount();
+    }
+    
+    public function deleteUsuariosByName(string $username) : int{
+        $like = "%$username%";
+        $stmt = $this->db->prepare("DELETE FROM usuarios WHERE username LIKE ?");
+        $stmt->execute([$like]);
+        return $stmt->rowCount();
     }
 }

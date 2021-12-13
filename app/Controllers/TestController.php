@@ -104,6 +104,23 @@ class TestController extends \Com\Daw2\Core\BaseController{
         $this->view->showViews(array('templates/header.view.php', 'test.view.php', 'templates/footer.view.php'), $_vars);
     }
     
+    public function updateUsuarioSalar(){
+        $username = 'Benjam__n_Fernandez_Cerqueira';
+        $salar = 1500;
+        $_vars = array('titulo' => 'Update salario usuario');
+        $model = new \Com\Daw2\Models\TestModel();
+        $_vars['usuariosUpdated'] = $model->updateSalarUsuario($username, $salar);
+        $this->view->showViews(array('templates/header.view.php', 'test.update.view.php', 'templates/footer.view.php'), $_vars);
+    }
+    
+    public function deleteUsuarios(){
+        $username = 'Benjam__n';        
+        $_vars = array('titulo' => 'Borrar usuarios con nombre like '.$username);
+        $model = new \Com\Daw2\Models\TestModel();
+        $_vars['usuariosUpdated'] = $model->deleteUsuariosByName($username);
+        $this->view->showViews(array('templates/header.view.php', 'test.update.view.php', 'templates/footer.view.php'), $_vars);
+    }
+    
     public function rellenarAleatorio(){
         $_vars = array('titulo' => 'Test Limit Bind');
         $model = new \Com\Daw2\Models\TestModel();

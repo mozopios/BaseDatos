@@ -16,6 +16,6 @@ $config->set('DEBUG', TRUE);
 
 $config->set('dbhost', 'localhost');
 $config->set('dbname', 'demoUD4');
-$config->set('dbuser', 'admin');
-$config->set('dbpass', 'daw2pass');
+$config->set('dbuser', 'root');
+$config->set('dbpass', 'sabate');
 $config->set('dbcharset', 'utf8mb4');
