@@ -1,5 +1,5 @@
 <?php
-
+namespace Com\Daw2\Helpers;
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-?>
 
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <div class="col-12">
-                Registros modificados: <?php echo $usuariosUpdated; ?>                
-            </div>
-        </div>
-      </div>
-
+class ArgumentoNoValidoException extends \Exception{
+    
+}

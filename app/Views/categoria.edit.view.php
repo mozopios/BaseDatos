@@ -1,6 +1,5 @@
 <?php
-
-/* 
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -20,12 +19,24 @@
  */
 ?>
 
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <div class="col-12">
-                Registros modificados: <?php echo $usuariosUpdated; ?>                
-            </div>
+<div class="container-fluid">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+        <div class="col-sm-6">                             
+            <!-- select -->
+            <div class="form-group">
+                <label>Select</label>
+                <select class="form-control">
+                    <?php 
+                    foreach($categoriasList as $c){
+                        echo '<option value="'.$c->id.'">'.$c->getFullName().'</option>';
+                    }
+                    ?>
+                </select>
+            </div>                                      
         </div>
-      </div>
+    </div>
+</div>
+
+
 
