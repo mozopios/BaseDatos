@@ -127,4 +127,30 @@ class TestController extends \Com\Daw2\Core\BaseController{
         $_vars['usuarios'] = $model->rellenarAleatorio();
         $this->view->showViews(array('templates/header.view.php', 'test.view.php', 'templates/footer.view.php'), $_vars);
     }
+    
+    public function insertCategoria(){
+        if(isset($_GET['id_padre'])){
+            $idPadre = filter_var($_GET['id_padre'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+            if(!is_null($idPadre) && $idPadre <= 0){
+                $idPadre = NULL;
+            }               
+        }
+        else{
+            $idPadre = NULL;
+        }
+        if(!isset($_GET['nombre']) ||empty($_GET['nombre'])){            
+            throw new \Exception("Se debe insertar el nombre de la categoría");
+        }        
+        else{
+            $_vars = array('titulo' => 'Insertar categoría');
+            $nombre = filter_var($_GET['nombre'], FILTER_SANITIZE_STRING);
+            $_vars['nombre'] = $nombre;
+            
+            $model = new \Com\Daw2\Models\TestModel();
+            $_vars['id'] = $model->insertCategoria($nombre, $idPadre);            
+            
+            $this->view->showViews(array('templates/header.view.php', 'test.insert.view.php', 'templates/footer.view.php'), $_vars);
+        }        
+        
+    }
 }
