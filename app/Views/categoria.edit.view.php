@@ -22,18 +22,46 @@
 <div class="container-fluid">
     <!-- Small boxes (Stat box) -->
     <div class="row">
-        <div class="col-sm-6">                             
-            <!-- select -->
-            <div class="form-group">
-                <label>Select</label>
-                <select class="form-control">
-                    <?php 
-                    foreach($categoriasList as $c){
-                        echo '<option value="'.$c->id.'">'.$c->getFullName().'</option>';
-                    }
-                    ?>
-                </select>
-            </div>                                      
+        <div class="col-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cubes mr-1"></i>
+                        Editar categoría
+                    </h3>                
+                </div>
+                <form action="./?controller=categoria&action=edit" method="post">
+                    <div class="card-body">
+                        <div class="row">
+                            <input type="hidden" name="id_categoria" value="<?php echo $categoria->id; ?>" />
+                            <!-- select -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Categoría padre:</label>
+                                    <select class="form-control">
+                                        <option><i>Ninguna</i></option>
+                                        <?php
+                                        foreach ($categoriasList as $c) {
+                                            echo '<option value="' . $c->id . '" ' . ($idPadre === $c->id ? 'selected' : '') . '>' . $c->getFullName() . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>   </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre categoría:</label>
+                                    <input type="text" name="nombre" id="nombre" class="form-control" value="<?php echo $categoria->nombre; ?>" />
+                                </div> 
+                            </div>
+
+                        </div></div>
+                    <div class="card-footer">
+                        
+                        <button type="submit" class="btn btn-danger float-right " value="cancelar">Cancelar</button>
+                        <button type="submit" class="btn btn-primary mr-3 float-right" value="guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

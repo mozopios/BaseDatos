@@ -93,21 +93,22 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         
     }
     
-    public function editarCategoria(){
+    public function edit(){
         $idCategoria = filter_var($_GET['id_categoria'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if(!is_null($idCategoria)){
             $model = new \Com\Daw2\Models\CategoriaModel();
             $categoria = $model->loadCategoria($idCategoria);
             $categoriasList = $model->getAllCategorias();
-            var_dump($categoriasList);
+            //var_dump($categoriasList);
             $_vars = array(
                 'titulo' => 'Editar categoría', 
-                'categoria' => $categoria, 
+                'categoria' => $categoria,
+                'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
                 'categoriasList' => $categoriasList,
                 'breadcumb' => array(
-                    'Inicio' => array('url' => '#', 'active' => false)),
+                    'Inicio' => array('url' => '#', 'active' => false),
                     'Categoria' => array('url' => '?controller=categoria','active' => false),
-                    'Editar' => array('url' => '#', 'active' => true)
+                    'Editar' => array('url' => '#', 'active' => true))
                 );
             $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
         }
