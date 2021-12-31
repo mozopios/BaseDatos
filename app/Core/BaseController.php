@@ -5,7 +5,7 @@ abstract class BaseController {
     protected $view;
 
     function __construct() {
-        $this->view = new View();
+        $this->view = new View(get_class($this));
     }
     
     function getModel(string $model){

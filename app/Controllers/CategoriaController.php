@@ -33,13 +33,13 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
      */
     public function index()
     {                                 
-        $_vars = array('titulo' => 'Datos población Pontevedra',
+        $_vars = array('titulo' => 'Categorías',
                       'breadcumb' => array(
                         'Inicio' => array('url' => '#', 'active' => false),
                         'Categorias' => array('url' => '#','active' => true)),
                        
                       'Título' => 'Categorías',
-                      'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/csv.view.js')
+                      'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/categoria.index.js')
             );
         $model =  new \Com\Daw2\Models\CategoriaModel();      
         $_vars["data"] = $model->getAllCategorias();

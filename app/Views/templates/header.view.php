@@ -87,14 +87,14 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->          
           <li class="nav-item">
-            <a href="index.html" class="nav-link">
+              <a href="index.html" class="nav-link <?php echo (strpos($controller, 'InicioController') !== false ? 'active' : ''); ?>">
               <i class="nav-icon fas fa-th"></i>
               <p>
-                Inicio                <?php echo $controller; ?>
+                Inicio
               </p>
             </a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item menu-is-opening menu-open">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
@@ -110,7 +110,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="./?controller=categoria" class="nav-link <?php echo (strpos($controller, 'CategoriaController') !== false ? 'active' : ''); ?>">
                   <i class="fas fa-cubes nav-icon"></i>
                   <p>Categorías</p>
                 </a>

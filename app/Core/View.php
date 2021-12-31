@@ -2,7 +2,12 @@
 namespace Com\Daw2\Core;
 
 class View {
-
+    private $controller;
+    
+    public function __construct(string $controller){
+        $this->controller = $controller;
+    }
+    
     public function show(string $name, $vars = array()) {
         //$name - nombre de nuestra plantilla, por ej, listar.php
         //$vars - contenedor de variables,
@@ -24,7 +29,7 @@ class View {
                 $$key = $value;
             }
         }
-
+        $controller = $this->controller;
         //Finalmente, incluimos la plantilla.
         include($path);
     }
@@ -52,6 +57,7 @@ class View {
                 $$key = $value;
             }
         }
+        $controller = $this->controller;
         foreach ($views as $v) {
             $path = $config->get('VIEWS_FOLDER') . $v;
             //Finalmente, incluimos la plantilla.
