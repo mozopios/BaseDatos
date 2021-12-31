@@ -27,10 +27,11 @@
     <div class="col-12">
         <div class="card shadow mb-4">
             <div
-                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><?php echo $titulo; ?></h6>                                    
+                class="card-header">
+                <a href="./?controller=categoria&action=new" class="btn btn-outline-primary float-right">Nueva categoría</a>                              
             </div>
-            <div class="card-body">  
+            <div class="card-body"> 
+                <?php if(count($data) > 0) { ?>
                 <table id="categoriaTable" class="table table-bordered table-striped  dataTable">
                     <thead>
                         <tr>
@@ -48,13 +49,25 @@
                             <td><?php echo $categoria->nombre; ?></td>
                             <td><?php echo (!is_null($categoria->padre) ? $categoria->padre->nombre : '-'); ?></td>
                             <td><?php echo $categoria->getFullName(); ?></td>
-                            <td align="center"><a class="btn btn-clock btn-primary" href="./?controller=categoria&action=edit&id_categoria=<?php echo $categoria->id; ?>"><i class="fas fa-edit"></i></a> <a class="btn btn-clock btn-danger"><i class="fas fa-trash"></i></a></td>
+                            <td align="center"><a class="btn btn-clock btn-outline-primary" href="./?controller=categoria&action=edit&id_categoria=<?php echo $categoria->id; ?>"><i class="fas fa-edit"></i></a> <a class="btn btn-clock btn-outline-danger"><i class="fas fa-trash"></i></a></td>
                         </tr>
                             <?php
                         }                    
                     ?>
                     </tbody>
                 </table>
+                <?php
+                }
+                else{
+                    ?>
+                    <div class="callout callout-info">
+                      <h5>Sin categorías</h5>
+
+                      <p>No existen categorías dadas de alta que cumplan los requisitos. Pulse aquí para <a href="?controller=categoria&action=new">crear una nueva categoría.</a></p>
+                    </div>
+                <?php
+                }
+                ?>
             </div>
         </div>
     </div> 
