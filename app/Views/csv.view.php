@@ -10,7 +10,7 @@
                 <h6 class="m-0 font-weight-bold text-primary"><?php echo $csv_div_titulo; ?></h6>                                    
             </div>
             <div class="card-body">  
-                <table id="csvTable" class="table table-hover dataTable">
+                <table id="csvTable" class="table table-bordered table-striped  dataTable">
                     <?php 
                     $first = true;
                     foreach($data as $fila){

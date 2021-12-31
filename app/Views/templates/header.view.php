@@ -87,10 +87,10 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->          
           <li class="nav-item">
-            <a href="index.html" class="nav-link active">
+            <a href="index.html" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
-                Inicio                
+                Inicio                <?php echo $controller; ?>
               </p>
             </a>
           </li>

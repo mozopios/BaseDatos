@@ -27,38 +27,53 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         <i class="fas fa-cubes mr-1"></i>
-                        Editar categoría
+                        Datos categoría
                     </h3>                
                 </div>
-                <form action="./?controller=categoria&action=edit" method="post">
+                <form action="./?controller=categoria&action=<?php echo $_GET['action']; ?>" method="post">
                     <div class="card-body">
                         <div class="row">
                             <input type="hidden" name="id_categoria" value="<?php echo $categoria->id; ?>" />
                             <!-- select -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Categoría padre:</label>
-                                    <select class="form-control">
-                                        <option><i>Ninguna</i></option>
+                                    <label>Categoría padre: <?php echo $idPadre; ?></label>
+                                    <select class="form-control" name="id_padre" id="id_padre">
+                                        <option value="0"><i>Ninguna</i></option>
                                         <?php
                                         foreach ($categoriasList as $c) {
-                                            echo '<option value="' . $c->id . '" ' . ($idPadre === $c->id ? 'selected' : '') . '>' . $c->getFullName() . '</option>';
+                                            echo '<option value="' . $c->id . '" ' . ($idPadre == $c->id ? 'selected' : '') . '>' . $c->getFullName() . '</option>';
                                         }
                                         ?>
                                     </select>
-                                </div>   </div>
+                                    <?php
+                                    if(isset($errors['id_padre'])){
+                                    ?>
+                                    <p class="text-danger"><small><?php echo $errors['id_padre']; ?></small></p>
+                                    <?php
+                                    }
+                                    ?>
+                                </div>   
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="nombre">Nombre categoría:</label>
-                                    <input type="text" name="nombre" id="nombre" class="form-control" value="<?php echo $categoria->nombre; ?>" />
+                                    <input type="text" name="nombre" id="nombre" class="form-control" value="<?php echo $categoriaEdit->nombre; ?>" />
+                                    <?php
+                                    if(isset($errors['nombre'])){
+                                    ?>
+                                    <p class="text-danger"><small><?php echo $errors['nombre']; ?></small></p>
+                                    <?php
+                                    }
+                                    ?>
                                 </div> 
                             </div>
 
                         </div></div>
                     <div class="card-footer">
                         
-                        <button type="submit" class="btn btn-danger float-right " value="cancelar">Cancelar</button>
-                        <button type="submit" class="btn btn-primary mr-3 float-right" value="guardar">Guardar</button>
+                        <button type="submit" name="action" class="btn btn-danger float-right " value="cancelar">Cancelar</button>
+                        <button type="submit" name="action" class="btn btn-primary mr-3 float-right" value="guardar">Guardar</button>
                     </div>
                 </form>
             </div>

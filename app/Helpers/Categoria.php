@@ -21,6 +21,8 @@ class Categoria {
     const SEPARADOR = ">";
     
     public function __construct(?int $id, ?Categoria $p, string $n) {
+        Categoria::checkNombre($n);
+        Categoria::checkId($id);
         $this->id = $id;
         $this->padre = $p;
         $this->nombre = $n; 
@@ -46,12 +48,25 @@ class Categoria {
         }
     }
     
+    private static function checkNombre(string $value){
+        if(empty($value)){
+            throw new ArgumentoNoValidoException("El nombre debe tener una longitud mayor que cero");
+        }
+    }
+    
+    private static function checkId(?int $value){
+        if(!is_null($value) && $value <= 0){
+            throw new ArgumentoNoValidoException("El identificador no es válido");
+        }
+    }
+    
     public function __set(string $name, $value){
         if (property_exists(get_class($this), $name)) {
             if($name == "nombre"){
                 if(!is_string($value)){
                     throw new ArgumentoNoValidoException("El nombre debe ser una string");
                 }
+                $this->checkNombre($value);
                 $this->$name = $value;
             }
             elseif($name == "padre"){
@@ -67,6 +82,14 @@ class Categoria {
         else{
             throw new \Exception("No puede establecer el valor del parámetro $name");
         }
-    }        
+    }   
+    
+    public static function getStdClass() : \stdClass{
+        $std = new \stdClass();
+        $std->id = NULL;
+        $std->padre = NULL;
+        $std->nombre = ""; 
+        return $std;
+    }
     
 }

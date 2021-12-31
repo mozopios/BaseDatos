@@ -50,14 +50,14 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
     }
     
     public function updateCategoria(int $idCategoria, string $nombre, ?int $padre) : ?Categoria{
-        $stmt = $this->db->prepare("UPDATE categoria SET nombre = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
+        $stmt = $this->db->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
         $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre, 'id_categoria' => $idCategoria]);
         //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
         return $this->db->lastInsertId();
     }
     
     public function updateCategoriaObject(Categoria $c) : ?Categoria{
-        $stmt = $this->db->prepare("UPDATE categoria SET nombre = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
+        $stmt = $this->db->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
         //Si usamos isset va a dar error porque no llama al magic get
         $idPadre = !is_null($c->padre) ? $c->padre->id : null;
         if($stmt->execute(['nombre' => $c->nombre, 'id_padre' => $idPadre, 'id_categoria' => $c->id])){

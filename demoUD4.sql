@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Xerado en: 30 de Dec de 2021 ás 14:00
+-- Xerado en: 31 de Dec de 2021 ás 11:42
 -- Versión do servidor: 10.3.32-MariaDB-0ubuntu0.20.04.1
 -- Versión do PHP: 7.4.3
 
@@ -33,6 +33,17 @@ CREATE TABLE `categoria` (
   `nombre_categoria` varchar(50) NOT NULL,
   `id_padre` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- A extraer os datos da táboa `categoria`
+--
+
+INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`, `id_padre`) VALUES
+(3, 'Videojuegos', NULL),
+(4, 'Microsoft', 3),
+(5, 'Nintendo', 3),
+(6, 'Xbox Series S/X', 4),
+(7, 'Sony', 3);
 
 -- --------------------------------------------------------
 
@@ -172,7 +183,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT for table `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricións para os envorcados das táboas
