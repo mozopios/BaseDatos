@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Xerado en: 31 de Dec de 2021 ás 11:42
+-- Xerado en: 04 de Xan de 2022 ás 16:49
 -- Versión do servidor: 10.3.32-MariaDB-0ubuntu0.20.04.1
 -- Versión do PHP: 7.4.3
 
@@ -43,7 +43,10 @@ INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`, `id_padre`) VALUES
 (4, 'Microsoft', 3),
 (5, 'Nintendo', 3),
 (6, 'Xbox Series S/X', 4),
-(7, 'Sony', 3);
+(7, 'Sony', 3),
+(13, 'Telefonía', NULL),
+(14, 'Android', 13),
+(15, 'iOS', 13);
 
 -- --------------------------------------------------------
 
@@ -183,7 +186,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT for table `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Restricións para os envorcados das táboas
