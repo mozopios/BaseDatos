@@ -69,6 +69,16 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
         }
     }
     
+    public function deleteCategoria(int $id) : bool{
+        $stmt = $this->db->prepare("DELETE FROM categoria WHERE id_categoria = ?");
+        if($stmt->execute([$id])){
+            return $stmt->rowCount() > 0;
+        }
+        else{
+            return false;
+        }
+    }
+    
     /**
      * Carga una Categoría desde la base de datos
      * @param int $id Identificador de la categoría

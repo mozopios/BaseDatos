@@ -25,6 +25,17 @@
   <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 <div class="row">
     <div class="col-12">
+        <?php 
+        if(!is_null($msg)){
+        ?>
+        <div class="alert alert-<?php echo $msg->getType(); ?> alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h5><i class="icon <?php echo $msg->getIcon(); ?>"></i> <?php echo $msg->getTitle(); ?></h5>
+          <?php echo $msg->getText(); ?>
+        </div>
+        <?php    
+        }
+        ?>
         <div class="card shadow mb-4">
             <div
                 class="card-header">
@@ -49,7 +60,7 @@
                             <td><?php echo $categoria->nombre; ?></td>
                             <td><?php echo (!is_null($categoria->padre) ? $categoria->padre->nombre : '-'); ?></td>
                             <td><?php echo $categoria->getFullName(); ?></td>
-                            <td align="center"><a class="btn btn-clock btn-outline-primary" href="./?controller=categoria&action=edit&id_categoria=<?php echo $categoria->id; ?>"><i class="fas fa-edit"></i></a> <a class="btn btn-clock btn-outline-danger"><i class="fas fa-trash"></i></a></td>
+                            <td align="center"><a class="btn btn-clock btn-outline-primary" href="./?controller=categoria&action=edit&id_categoria=<?php echo $categoria->id; ?>"><i class="fas fa-edit"></i></a> <a class="btn btn-clock btn-outline-danger" href="./?controller=categoria&action=delete&id_categoria=<?php echo $categoria->id; ?>"><i class="fas fa-trash"></i></a></td>
                         </tr>
                             <?php
                         }                    

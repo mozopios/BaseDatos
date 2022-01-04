@@ -21,6 +21,7 @@
 
 namespace Com\Daw2\Controllers;
 
+use \Com\Daw2\Helpers\Mensaje;
 /**
  * Description of TestController
  *
@@ -31,13 +32,13 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
     /**
      * Sin emulado obtenemos que los números se reciben como float
      */
-    public function index()
+    public function index(?Mensaje $msg = NULL)
     {                                 
         $_vars = array('titulo' => 'Categorías',
                       'breadcumb' => array(
                         'Inicio' => array('url' => '#', 'active' => false),
                         'Categorias' => array('url' => '#','active' => true)),
-                       
+                       'msg' => $msg,
                       'Título' => 'Categorías',
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/categoria.index.js')
             );
@@ -167,13 +168,13 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
                     'breadcumb' => array(
                         'Inicio' => array('url' => '#', 'active' => false),
                         'Categoria' => array('url' => '?controller=categoria','active' => false),
-                        'Editar' => array('url' => '#', 'active' => true))
+                        'Editar' => array('url' => '#', 'active' => true)),                    
                     );
                 $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
             }
             else{
                 //Si la petición es incorrecta o han dado a cancelar, recargamos el listado
-                $this->index();
+                $this->index(new Mensaje('danger', '400. Bad request', 'No se ha solicitado correctamente la categoría a editar'));
             }
         }
         elseif(isset($_POST['action']) && $_POST['action'] === 'guardar'){
@@ -183,7 +184,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
                 $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria($_POST['id_padre']) : NULL;
                 $categoria = new \Com\Daw2\Helpers\Categoria($_POST['id_categoria'], $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
                 $model->updateCategoriaObject($categoria);                 
-                $this->index();
+                $this->index(new Mensaje('success', 'Editada correctamente', 'Categoría: '.$categoria->getFullName().' editada correctamente'));
             }
             else{
                 if(!isset($_errors['id_categoria'])){
@@ -216,6 +217,32 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         else{
             //Si la petición es incorrecta o han dado a cancelar, recargamos el listado
             $this->index();
+        }
+    }
+    
+    public function delete() : void{
+        $model = new \Com\Daw2\Models\CategoriaModel();
+        $id = filter_var($_GET['id_categoria'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+        if(!is_null($id)){
+            try{
+                if($model->deleteCategoria($id)){
+                    $this->index(new Mensaje("success", "¡Eliminada!", "Categoría borrada con éxito"));
+                }
+                else{
+                    $this->index(new Mensaje("warning", "Sin cambios", "No se ha borrado la categoría: $id"));
+                }            
+            }
+            catch(\PDOException $ex){
+                if(strpos($ex->getMessage(), '1451') !== false){
+                    $this->index(new Mensaje("danger", "No permitido", "Antes de borrar una categoría debe editar o borrar todas las categorías hijas."));
+                }
+                else{
+                    $this->index(new Mensaje("danger", "No permitido", "PDOException: ".$ex->getMessage()));
+                }
+            }
+        }
+        else{
+            $this->index(new Mensaje("warning", "Petición incorrecta", "No se ha facilitado la categoría a borrar"));
         }
     }
     
