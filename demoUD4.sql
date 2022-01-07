@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Xerado en: 04 de Xan de 2022 ás 16:49
+-- Xerado en: 07 de Xan de 2022 ás 14:40
 -- Versión do servidor: 10.3.32-MariaDB-0ubuntu0.20.04.1
 -- Versión do PHP: 7.4.3
 
@@ -51,10 +51,30 @@ INSERT INTO `categoria` (`id_categoria`, `nombre_categoria`, `id_padre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura da táboa `usuarios`
+-- Estrutura da táboa `log`
 --
 
-CREATE TABLE `usuarios` (
+CREATE TABLE `log` (
+  `id_log` int(11) NOT NULL,
+  `operacion` varchar(50) NOT NULL,
+  `tabla` varchar(50) NOT NULL,
+  `detalle` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- A extraer os datos da táboa `log`
+--
+
+INSERT INTO `log` (`id_log`, `operacion`, `tabla`, `detalle`) VALUES
+(1, 'update', 'usuario', 'Actualizado el sueldo del usuario \"Alexis_Jose_da_Silva_Pereira al valor: 4403');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da táboa `usuario`
+--
+
+CREATE TABLE `usuario` (
   `username` varchar(50) NOT NULL,
   `rol` varchar(50) DEFAULT NULL,
   `salarioBruto` float(10,2) DEFAULT NULL,
@@ -63,14 +83,14 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- A extraer os datos da táboa `usuarios`
+-- A extraer os datos da táboa `usuario`
 --
 
-INSERT INTO `usuarios` (`username`, `rol`, `salarioBruto`, `retencionIRPF`, `activo`) VALUES
+INSERT INTO `usuario` (`username`, `rol`, `salarioBruto`, `retencionIRPF`, `activo`) VALUES
 ('administrador', 'administrador', 5000.00, 30.00, b'1'),
 ('Alexis_Jose_Alvarez_Araujo', 'standard', 4399.00, 30.00, b'1'),
 ('Alexis_Jose_da_Silva_Oset', 'standard', 3355.00, 20.00, b'1'),
-('Alexis_Jose_da_Silva_Pereira', 'standard', 3014.00, 20.00, b'1'),
+('Alexis_Jose_da_Silva_Pereira', 'standard', 4403.00, 30.00, b'1'),
 ('Alexis_Jose_Giraldez_Oset', 'standard', 4410.00, 30.00, b'1'),
 ('Alexis_Jose_Gonzalez_Carrera', 'standard', 4125.00, 30.00, b'1'),
 ('Alexis_Jose_Gonzalez_Pereira', 'standard', 1587.00, 18.00, b'1'),
@@ -173,9 +193,15 @@ ALTER TABLE `categoria`
   ADD KEY `FK_PADRE_CATEGORIA` (`id_padre`);
 
 --
--- Indexes for table `usuarios`
+-- Indexes for table `log`
 --
-ALTER TABLE `usuarios`
+ALTER TABLE `log`
+  ADD PRIMARY KEY (`id_log`,`operacion`,`tabla`);
+
+--
+-- Indexes for table `usuario`
+--
+ALTER TABLE `usuario`
   ADD PRIMARY KEY (`username`);
 
 --
@@ -187,6 +213,12 @@ ALTER TABLE `usuarios`
 --
 ALTER TABLE `categoria`
   MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `log`
+--
+ALTER TABLE `log`
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricións para os envorcados das táboas

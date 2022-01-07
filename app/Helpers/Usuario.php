@@ -20,7 +20,7 @@ namespace Com\Daw2\Helpers;
  */
 
 /**
- * Clase Data Object para almacenar/recuperar los datos de la tabla usuarios
+ * Clase Data Object para almacenar/recuperar los datos de la tablausuario
  *
  * @author Rafael González Centeno
  */

@@ -105,8 +105,8 @@ class TestController extends \Com\Daw2\Core\BaseController{
     }
     
     public function updateUsuarioSalar(){
-        $username = 'Benjam__n_Fernandez_Cerqueira';
-        $salar = 1500;
+        $username = 'Alexis_Jose_da_Silva_Pereira';
+        $salar = rand(1000, 5000);
         $_vars = array('titulo' => 'Update salario usuario');
         $model = new \Com\Daw2\Models\TestModel();
         $_vars['usuariosUpdated'] = $model->updateSalarUsuario($username, $salar);
