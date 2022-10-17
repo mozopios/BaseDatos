@@ -31,9 +31,9 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
     
     public function getUsuariosClass(array $options = array()) : array{
         foreach($options as $key => $value){
-            $this->db->setAttribute($key, $value);
+            $this->pdo->setAttribute($key, $value);
         }
-        $query = $this->db->query("Select * FROM usuario");        
+        $query = $this->pdo->query("Select * FROM usuario");        
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         return $query->fetchAll();
     }
@@ -45,7 +45,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
      * @return array
      */
     public function getUsuariosLimit(int $from, int $to) : array{        
-        $query = $this->db->prepare("Select * FROM usuario LIMIT :from, :to");        
+        $query = $this->pdo->prepare("Select * FROM usuario LIMIT :from, :to");        
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->execute(['from' => $from, 'to' => $to]);
         return $query->fetchAll();
@@ -58,7 +58,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
      * @return array
      */
     public function getUsuariosLimitBind(int $page, int $entries) : array{   
-        $query = $this->db->prepare("Select * FROM usuario ORDER BY username LIMIT :page, :entries");        
+        $query = $this->pdo->prepare("Select * FROM usuario ORDER BY username LIMIT :page, :entries");        
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->bindValue(':page', (int)$page, PDO::PARAM_INT);
         $query->bindValue(':entries', (int)$entries, PDO::PARAM_INT); 
@@ -67,12 +67,12 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
     }
     
     public function getUsuariosByActive(bool $active) : array{   
-        $query = $this->db->prepare("Select * FROM usuario WHERE activo = :active ORDER BY username");        
+        $query = $this->pdo->prepare("Select * FROM usuario WHERE activo = :active ORDER BY username");        
         
-        $query2 = $this->db->prepare("Select * FROM usuario WHERE username LIKE '%:username%'"); /* Erróneo */
+        $query2 = $this->pdo->prepare("Select * FROM usuario WHERE username LIKE '%:username%'"); /* Erróneo */
         $query2->execute(['username' => 'rafa']);
         
-        $query3 = $this->db->prepare("Select * FROM usuario WHERE username IN :lista_usuarios"); /* Erróneo */
+        $query3 = $this->pdo->prepare("Select * FROM usuario WHERE username IN :lista_usuarios"); /* Erróneo */
         $lista = ['Pepito', 'Pedro', 'Manolo'];
         $query3->execute(['lista_usuarios' => implode(",", $lista)]);
         
@@ -96,7 +96,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $direction = $asc ? 'ASC' : 'DESC';
         //Como hemos filtrado, podemos estar seguros de que no va a hacer nada para lo que no esté autorizado
         
-        $query = $this->db->prepare("Select * FROM usuario ORDER BY $orderBy $direction"); 
+        $query = $this->pdo->prepare("Select * FROM usuario ORDER BY $orderBy $direction"); 
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->execute();
         return $query->fetchAll();
@@ -109,7 +109,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $_roles = ["administrador", "facturas", "gestor", "ventas", "standard"];
         $insertado = 0;
         //Si no estuviera emulated = off el prepare debería ir dentro del for
-        $query = $this->db->prepare("INSERT INTO usuario (username, rol, salarioBruto, retencionIRPF) values (:username, :rol, :bruto, :irpf)");
+        $query = $this->pdo->prepare("INSERT INTO usuario (username, rol, salarioBruto, retencionIRPF) values (:username, :rol, :bruto, :irpf)");
         for($i = 0; $i < 100; $i++){            
             $username = $nombre[random_int(0, count($nombre) -1)].'_'.$apellido1[random_int(0, count($apellido1) -1)].'_'.$apellido2[random_int(0, count($apellido2) -1)];
             $username = preg_replace("/[^A-Za-z_]/", "_", $username);
@@ -151,19 +151,19 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
     public function updateSalarUsuario(string $usuario, float $salar) : int{
         $irpf = self::calcularIRPF($salar);
         try{
-            $this->db->beginTransaction();
-            $stmt = $this->db->prepare("UPDATE usuario SET salarioBruto = :salarioBruto, retencionIRPF = :retencionIRPF WHERE username = :username");
+            $this->pdo->beginTransaction();
+            $stmt = $this->pdo->prepare("UPDATE usuario SET salarioBruto = :salarioBruto, retencionIRPF = :retencionIRPF WHERE username = :username");
             $stmt->execute(['salarioBruto' => $salar, 'retencionIRPF' => $irpf, 'username' => $usuario]);
             $edited = $stmt->rowCount();
             if($edited > 0){
                 $log = new \Com\Daw2\Helpers\Log(NULL, 'update', 'usuario', 'Actualizado el sueldo del usuario "'.$usuario.' al valor: '. $salar);     
-                $stmtLog = $this->db->prepare("INSERT INTO log (operacion, tabla, detalle) VALUES (:operacion, :tabla, :detalle)");
+                $stmtLog = $this->pdo->prepare("INSERT INTO log (operacion, tabla, detalle) VALUES (:operacion, :tabla, :detalle)");
                 $stmtLog->execute(['operacion' => $log->getOperacion(), 'tabla' => $log->getTabla(), 'detalle' => $log->getDetalle()]);
             }
-            $this->db->commit();
+            $this->pdo->commit();
         }
         catch(\Exception $ex){
-            $this->db->rollback();
+            $this->pdo->rollback();
             throw $ex;
         }
         return $edited;
@@ -171,16 +171,16 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
     
     public function deleteUsuariosByName(string $username) : int{
         $like = "%$username%";
-        $stmt = $this->db->prepare("DELETE FROM usuario WHERE username LIKE ?");
+        $stmt = $this->pdo->prepare("DELETE FROM usuario WHERE username LIKE ?");
         $stmt->execute([$like]);
         return $stmt->rowCount();
     }
     
     public function insertCategoria(string $nombre, ?int $padre) : int{
-        $stmt = $this->db->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
+        $stmt = $this->pdo->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
         $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre]);
         //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-        return $this->db->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
         
 }

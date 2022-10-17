@@ -3,10 +3,11 @@ namespace Com\Daw2\Core;
 
 abstract class BaseModel
 {
-   protected $db;
+   //Objeto de tipo PDO que se inicializa al momento de crear un objeto de la subclase
+   protected $pdo;
 
    public function __construct()
    {
-      $this->db = DBManager::getInstance()->getConnection();
+      $this->pdo = DBManager::getInstance()->getConnection();
    }
 }

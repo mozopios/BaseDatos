@@ -30,19 +30,19 @@ use Com\Daw2\Helpers\Categoria;
 class CategoriaModel extends \Com\Daw2\Core\BaseModel{
 
     public function insertCategoria(string $nombre, ?int $padre) : int{
-        $stmt = $this->db->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
+        $stmt = $this->pdo->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
         $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre]);
         //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-        return $this->db->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
     
     public function insertCategoriaObject(Categoria $c) : ?Categoria{        
-        $stmt = $this->db->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");        
+        $stmt = $this->pdo->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");        
         //Si usamos isset va a dar error porque no llama al magic get
         $idPadre = !is_null($c->padre) ? $c->padre->id : null;
         if($stmt->execute(['nombre' => $c->nombre, 'id_padre' => $idPadre])){
             //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-            return $this->loadCategoria($this->db->lastInsertId());
+            return $this->loadCategoria($this->pdo->lastInsertId());
         }
         else{
             return null;
@@ -50,14 +50,14 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
     }
     
     public function updateCategoria(int $idCategoria, string $nombre, ?int $padre) : ?Categoria{
-        $stmt = $this->db->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
+        $stmt = $this->pdo->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
         $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre, 'id_categoria' => $idCategoria]);
         //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-        return $this->db->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
     
     public function updateCategoriaObject(Categoria $c) : ?Categoria{
-        $stmt = $this->db->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
+        $stmt = $this->pdo->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
         //Si usamos isset va a dar error porque no llama al magic get
         $idPadre = !is_null($c->padre) ? $c->padre->id : null;
         if($stmt->execute(['nombre' => $c->nombre, 'id_padre' => $idPadre, 'id_categoria' => $c->id])){
@@ -70,7 +70,7 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
     }
     
     public function deleteCategoria(int $id) : bool{
-        $stmt = $this->db->prepare("DELETE FROM categoria WHERE id_categoria = ?");
+        $stmt = $this->pdo->prepare("DELETE FROM categoria WHERE id_categoria = ?");
         if($stmt->execute([$id])){
             return $stmt->rowCount() > 0;
         }
@@ -85,7 +85,7 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
      * @return Categoria|null Null si el identificador no existe. La Categoría en caso de existir.
      */
     public function loadCategoria(int $id) : ?Categoria{
-        $stmt = $this->db->prepare("SELECT * FROM categoria WHERE id_categoria = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_categoria = ?");
         $stmt->execute([$id]);
         if($row = $stmt->fetch()){
            return $this->rowToCategoria($row);
@@ -95,7 +95,7 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
     
     public function getAllCategorias() : array{
         $_res = array();
-        $stmt = $this->db->prepare("SELECT * FROM categoria WHERE id_padre is NULL ORDER BY nombre_categoria");
+        $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_padre is NULL ORDER BY nombre_categoria");
         $stmt->execute();
         $_categorias = $stmt->fetchAll();
         foreach($_categorias as $c){
@@ -107,7 +107,7 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
     }
     private function getAllCategoriasHijas(int $id_padre) : array{
         $_res = array();
-        $stmt = $this->db->prepare("SELECT * FROM categoria WHERE id_padre = ? ORDER BY nombre_categoria");
+        $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_padre = ? ORDER BY nombre_categoria");
         $stmt->execute([$id_padre]);
         $_cats = $stmt->fetchAll();
         foreach($_cats as $c){
