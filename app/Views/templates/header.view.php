@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AdminLTE 3 | Dashboard</title>
-
+  <base href="/">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -87,7 +87,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->          
           <li class="nav-item">
-              <a href="index.html" class="nav-link <?php echo (strpos($controller, 'InicioController') !== false ? 'active' : ''); ?>">
+              <a href="/" class="nav-link <?php echo (strpos($controller, 'InicioController') !== false ? 'active' : ''); ?>">
               <i class="nav-icon fas fa-th"></i>
               <p>
                 Inicio
@@ -110,7 +110,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./?controller=categoria" class="nav-link <?php echo (strpos($controller, 'CategoriaController') !== false ? 'active' : ''); ?>">
+                <a href="./categoria" class="nav-link <?php echo (strpos($controller, 'CategoriaController') !== false ? 'active' : ''); ?>">
                   <i class="fas fa-cubes nav-icon"></i>
                   <p>Categorías</p>
                 </a>

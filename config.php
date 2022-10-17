@@ -1,6 +1,7 @@
 <?php
 $config = Com\Daw2\Core\Config::getInstance();
 
+$config->set('BASE_URL', '//ud05.localhost');
 $config->set('APP_FOLDER', '../app/');
 $config->set('DEFAULT_NAMESPACE', 'Com\Daw2\\');
 $config->set('CONTROLLERS_NAMESPACE', $config->get('DEFAULT_NAMESPACE').'Controllers\\');

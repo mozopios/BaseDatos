@@ -14,5 +14,7 @@
             "email": "rgcenteno@edu.xunta.gal"
         }
     ],
-    "require": {}
+    "require": {
+        "steampixel/simple-php-router": "^0.7.1"
+    }
 }

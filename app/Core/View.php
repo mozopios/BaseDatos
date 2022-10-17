@@ -29,6 +29,7 @@ class View {
                 $$key = $value;
             }
         }
+        //Necesario para saber en la vista qué controlador hemos cargado y así por ejemplo marcar en la barra izquierda la sección en la que estamos
         $controller = $this->controller;
         //Finalmente, incluimos la plantilla.
         include($path);
@@ -57,6 +58,7 @@ class View {
                 $$key = $value;
             }
         }
+        //Necesario para saber en la vista qué controlador hemos cargado y así por ejemplo marcar en la barra izquierda la sección en la que estamos
         $controller = $this->controller;
         foreach ($views as $v) {
             $path = $config->get('VIEWS_FOLDER') . $v;

@@ -30,7 +30,7 @@
                         Datos categoría
                     </h3>                
                 </div>
-                <form action="./?controller=categoria&action=<?php echo $_GET['action']; ?>" method="post">
+                <form action="/categoria/<?php echo $action; ?>" method="post">
                     <div class="card-body">
                         <div class="row">
                             <input type="hidden" name="id_categoria" value="<?php echo $categoria->id; ?>" />

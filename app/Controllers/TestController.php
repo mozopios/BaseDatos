@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -124,8 +124,8 @@ class TestController extends \Com\Daw2\Core\BaseController{
     public function rellenarAleatorio(){
         $_vars = array('titulo' => 'Test Limit Bind');
         $model = new \Com\Daw2\Models\TestModel();
-        $_vars['usuarios'] = $model->rellenarAleatorio();
-        $this->view->showViews(array('templates/header.view.php', 'test.view.php', 'templates/footer.view.php'), $_vars);
+        $_vars['usuariosUpdated'] = $model->rellenarAleatorio();
+        $this->view->showViews(array('templates/header.view.php', 'test.update.view.php', 'templates/footer.view.php'), $_vars);
     }
     
     public function insertCategoria(){

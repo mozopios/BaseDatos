@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 /* 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -29,11 +29,23 @@ use \Com\Daw2\Helpers\Mensaje;
  */
 class CategoriaController extends \Com\Daw2\Core\BaseController{
    
+    public function __construct() {
+        parent::__construct();
+    }
+
     /**
      * Sin emulado obtenemos que los números se reciben como float
      */
-    public function index(?Mensaje $msg = NULL)
-    {                                 
+    public function index()
+    {             
+        $msg = null;
+        if(isset($_GET['msg'])){
+            $decoded = base64_decode($_GET['msg']);
+            $msgArray = json_decode($decoded , true);
+            if(json_last_error() === JSON_ERROR_NONE){
+                $msg = new Mensaje($msgArray['type'], $msgArray['title'], $msgArray['text']);
+            }
+        }
         $_vars = array('titulo' => 'Categorías',
                       'breadcumb' => array(
                         'Inicio' => array('url' => '#', 'active' => false),
@@ -101,148 +113,138 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         
     }
     
-    public function new(){
+    public function newShowForm(){  
         $model = new \Com\Daw2\Models\CategoriaModel();
-        if(!isset($_POST['action'])){
-            $categoria = \Com\Daw2\Helpers\Categoria::getStdClass();
+        $categoria = \Com\Daw2\Helpers\Categoria::getStdClass();
+        $categoriasList = $model->getAllCategorias();
+        //var_dump($categoriasList);
+        $_vars = array(
+            'titulo' => 'Alta categoría', 
+            'categoria' => $categoria,
+            'categoriaEdit' => $categoria,
+            'action' => 'new',
+            'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
+            'categoriasList' => $categoriasList,
+            'breadcumb' => array(
+                'Inicio' => array('url' => '#', 'active' => false),
+                'Categoria' => array('url' => '?controller=categoria','active' => false),
+                'Nueva' => array('url' => '#', 'active' => true))
+            );
+        $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
+    }
+    
+    public function newProcessForm(){
+        $model = new \Com\Daw2\Models\CategoriaModel();
+        $_errors = $this->checkForm($_POST, false);
+            
+        if(count($_errors) === 0){
+            $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria((int)$_POST['id_padre']) : NULL;
+            $categoria = new \Com\Daw2\Helpers\Categoria(NULL, $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
+            $categoria = $model->insertCategoriaObject($categoria); 
+            $mensaje = new \Com\Daw2\Helpers\Mensaje("success", "¡Categoría insertada!", "La categoría " . $categoria->getFullName() . " se ha insertado con éxito"); 
+            header('location: /categoria?msg='. base64_encode(json_encode($mensaje)));
+            die;
+        }
+        else{                                
+            $std = $this->sanitizeForm($_POST);
             $categoriasList = $model->getAllCategorias();
             //var_dump($categoriasList);
             $_vars = array(
-                'titulo' => 'Alta categoría', 
-                'categoria' => $categoria,
-                'categoriaEdit' => $categoria,
-                'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
+                'titulo' => 'Alta categoría' , 
+                'categoria' => $std,
+                'categoriaEdit' => $std,
+                'action' => 'new',
+                'errors' => $_errors,
+                'idPadre' => isset($std->id_padre) ? $std->id_padre : NULL,
                 'categoriasList' => $categoriasList,
                 'breadcumb' => array(
                     'Inicio' => array('url' => '#', 'active' => false),
                     'Categoria' => array('url' => '?controller=categoria','active' => false),
                     'Nueva' => array('url' => '#', 'active' => true))
                 );
+
             $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
         }
-        elseif($_POST['action'] == 'guardar'){
-            $_errors = $this->checkForm($_POST, false);
-            
-            if(count($_errors) === 0){
-                $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria($_POST['id_padre']) : NULL;
-                $categoria = new \Com\Daw2\Helpers\Categoria(NULL, $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
-                $categoria = $model->insertCategoriaObject($categoria);                 
-                $this->index();
-            }
-            else{                                
-                $std = $this->sanitizeForm($_POST);
-                $categoriasList = $model->getAllCategorias();
-                //var_dump($categoriasList);
-                $_vars = array(
-                    'titulo' => 'Alta categoría' , 
-                    'categoria' => $std,
-                    'categoriaEdit' => $std,
-                    'errors' => $_errors,
-                    'idPadre' => isset($std->id_padre) ? $std->id_padre : NULL,
-                    'categoriasList' => $categoriasList,
-                    'breadcumb' => array(
-                        'Inicio' => array('url' => '#', 'active' => false),
-                        'Categoria' => array('url' => '?controller=categoria','active' => false),
-                        'Nueva' => array('url' => '#', 'active' => true))
-                    );
+    }
+    
+    public function editShowForm(int $idCategoria){        
+        $model = new \Com\Daw2\Models\CategoriaModel();        
+        $categoria = $model->loadCategoria($idCategoria);
+        $categoriasList = $model->getAllCategorias();
+        //var_dump($categoriasList);
+        $_vars = array(
+            'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
+            'categoria' => $categoria,
+            'action' => 'edit',
+            'categoriaEdit' => $categoria,
+            'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
+            'categoriasList' => $categoriasList,                    
+            'breadcumb' => array(
+                'Inicio' => array('url' => '#', 'active' => false),
+                'Categoria' => array('url' => '?controller=categoria','active' => false),
+                'Editar' => array('url' => '#', 'active' => true)),                    
+            );
+        $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);           
+    }
+    
+    public function editProcessForm(){
+        $model = new \Com\Daw2\Models\CategoriaModel();
+        $_errors = $this->checkForm($_POST);
 
-                $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
-            }
+        if(count($_errors) === 0){
+            $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria((int)$_POST['id_padre']) : NULL;
+            $categoria = new \Com\Daw2\Helpers\Categoria((int)$_POST['id_categoria'], $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
+            $model->updateCategoriaObject($categoria);                 
+
+            $mensaje = new Mensaje('success', 'Editada correctamente', 'Categoría: '.$categoria->getFullName().' editada correctamente'); 
+            header('location: /categoria?msg='. base64_encode(json_encode($mensaje)));
+        }
+        else{            
+            $model = new \Com\Daw2\Models\CategoriaModel();
+            $categoria = $model->loadCategoria($_POST['id_categoria']);
+            $std = $this->sanitizeForm($_POST);
+            $categoriasList = $model->getAllCategorias();
+            //var_dump($categoriasList);
+            $_vars = array(
+                'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
+                'categoria' => $categoria,
+                'action' => 'edit',
+                'categoriaEdit' => $std,
+                'errors' => $_errors,
+                'idPadre' => isset($std->id_padre) ? $std->id_padre : NULL,
+                'categoriasList' => $categoriasList,
+                'breadcumb' => array(
+                    'Inicio' => array('url' => '#', 'active' => false),
+                    'Categoria' => array('url' => '?controller=categoria','active' => false),
+                    'Editar' => array('url' => '#', 'active' => true))
+                );
+
+            $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);            
         }
     }
     
-    public function edit(){        
-        $model = new \Com\Daw2\Models\CategoriaModel();
-        if(isset($_GET['id_categoria'])){
-            $idCategoria = filter_var($_GET['id_categoria'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-            if(!is_null($idCategoria)){                
-                $categoria = $model->loadCategoria($idCategoria);
-                $categoriasList = $model->getAllCategorias();
-                //var_dump($categoriasList);
-                $_vars = array(
-                    'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
-                    'categoria' => $categoria,
-                    'categoriaEdit' => $categoria,
-                    'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
-                    'categoriasList' => $categoriasList,                    
-                    'breadcumb' => array(
-                        'Inicio' => array('url' => '#', 'active' => false),
-                        'Categoria' => array('url' => '?controller=categoria','active' => false),
-                        'Editar' => array('url' => '#', 'active' => true)),                    
-                    );
-                $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
+    public function delete(int $id) : void{
+        $model = new \Com\Daw2\Models\CategoriaModel();   
+        $mensaje = null;
+        try{
+            if($model->deleteCategoria($id)){
+                $mensaje = new Mensaje("success", "¡Eliminada!", "Categoría borrada con éxito");                
             }
             else{
-                //Si la petición es incorrecta o han dado a cancelar, recargamos el listado
-                $this->index(new Mensaje('danger', '400. Bad request', 'No se ha solicitado correctamente la categoría a editar'));
-            }
+                $mensaje = new Mensaje("warning", "Sin cambios", "No se ha borrado la categoría: $id");
+            }            
         }
-        elseif(isset($_POST['action']) && $_POST['action'] === 'guardar'){
-            $_errors = $this->checkForm($_POST);
-            
-            if(count($_errors) === 0){
-                $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria($_POST['id_padre']) : NULL;
-                $categoria = new \Com\Daw2\Helpers\Categoria($_POST['id_categoria'], $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
-                $model->updateCategoriaObject($categoria);                 
-                $this->index(new Mensaje('success', 'Editada correctamente', 'Categoría: '.$categoria->getFullName().' editada correctamente'));
+        catch(\PDOException $ex){
+            if(strpos($ex->getMessage(), '1451') !== false){
+                $mensaje = new Mensaje("danger", "No permitido", "Antes de borrar una categoría debe editar o borrar todas las categorías hijas.");
             }
             else{
-                if(!isset($_errors['id_categoria'])){
-                    $model = new \Com\Daw2\Models\CategoriaModel();
-                    $categoria = $model->loadCategoria($_POST['id_categoria']);
-                    $std = $this->sanitizeForm($_POST);
-                    $categoriasList = $model->getAllCategorias();
-                    //var_dump($categoriasList);
-                    $_vars = array(
-                        'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
-                        'categoria' => $categoria,
-                        'categoriaEdit' => $std,
-                        'errors' => $_errors,
-                        'idPadre' => isset($std->id_padre) ? $std->id_padre : NULL,
-                        'categoriasList' => $categoriasList,
-                        'breadcumb' => array(
-                            'Inicio' => array('url' => '#', 'active' => false),
-                            'Categoria' => array('url' => '?controller=categoria','active' => false),
-                            'Editar' => array('url' => '#', 'active' => true))
-                        );
-                    
-                    $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
-                }
-                else{
-                    $this->new();
-                }
-                
+                $mensaje = new Mensaje("danger", "No permitido", "PDOException: ".$ex->getMessage());
             }
-        }
-        else{
-            //Si la petición es incorrecta o han dado a cancelar, recargamos el listado
-            $this->index();
-        }
-    }
-    
-    public function delete() : void{
-        $model = new \Com\Daw2\Models\CategoriaModel();
-        $id = filter_var($_GET['id_categoria'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-        if(!is_null($id)){
-            try{
-                if($model->deleteCategoria($id)){
-                    $this->index(new Mensaje("success", "¡Eliminada!", "Categoría borrada con éxito"));
-                }
-                else{
-                    $this->index(new Mensaje("warning", "Sin cambios", "No se ha borrado la categoría: $id"));
-                }            
-            }
-            catch(\PDOException $ex){
-                if(strpos($ex->getMessage(), '1451') !== false){
-                    $this->index(new Mensaje("danger", "No permitido", "Antes de borrar una categoría debe editar o borrar todas las categorías hijas."));
-                }
-                else{
-                    $this->index(new Mensaje("danger", "No permitido", "PDOException: ".$ex->getMessage()));
-                }
-            }
-        }
-        else{
-            $this->index(new Mensaje("warning", "Petición incorrecta", "No se ha facilitado la categoría a borrar"));
+        }        
+        finally{
+            var_dump($mensaje);
+            header('location: /categoria?msg='. base64_encode(json_encode($mensaje)));
         }
     }
     

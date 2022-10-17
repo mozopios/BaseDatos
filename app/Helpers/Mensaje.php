@@ -20,7 +20,7 @@
  */
 namespace Com\Daw2\Helpers;
 
-class Mensaje{
+class Mensaje implements \JsonSerializable{
     private $type;
     private $title;
     private $text;
@@ -60,4 +60,13 @@ class Mensaje{
     public function getText() {
         return $this->text;
     }
+    
+    public function jsonSerialize() {
+        return [
+            'type' => $this->type,
+            'title' => htmlentities($this->title),
+            'text' => htmlentities($this->text)
+        ];
+    }
+
 }

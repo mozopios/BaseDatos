@@ -58,7 +58,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
      * @return array
      */
     public function getUsuariosLimitBind(int $page, int $entries) : array{   
-        $query = $this->db->prepare("Select * FROMusuario ORDER BY username LIMIT :page, :entries");        
+        $query = $this->db->prepare("Select * FROM usuario ORDER BY username LIMIT :page, :entries");        
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->bindValue(':page', (int)$page, PDO::PARAM_INT);
         $query->bindValue(':entries', (int)$entries, PDO::PARAM_INT); 
@@ -96,7 +96,7 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $direction = $asc ? 'ASC' : 'DESC';
         //Como hemos filtrado, podemos estar seguros de que no va a hacer nada para lo que no esté autorizado
         
-        $query = $this->db->prepare("Select * FROM usuario ORDER BY $orderBy $direction");   
+        $query = $this->db->prepare("Select * FROM usuario ORDER BY $orderBy $direction"); 
         $query->setFetchMode(PDO::FETCH_CLASS, '\Com\Daw2\Helpers\Usuario');
         $query->execute();
         return $query->fetchAll();
@@ -174,6 +174,13 @@ class TestModel extends \Com\Daw2\Core\BaseModel{
         $stmt = $this->db->prepare("DELETE FROM usuario WHERE username LIKE ?");
         $stmt->execute([$like]);
         return $stmt->rowCount();
+    }
+    
+    public function insertCategoria(string $nombre, ?int $padre) : int{
+        $stmt = $this->db->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
+        $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre]);
+        //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
+        return $this->db->lastInsertId();
     }
         
 }

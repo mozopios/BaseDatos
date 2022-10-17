@@ -2,42 +2,132 @@
 
 namespace Com\Daw2\Core;
 
+use Steampixel\Route;
+
 class FrontController {
 
     static function main() {
-        $config = Config::getInstance();
-
-        //Con el objetivo de no repetir nombre de clases
-        //  nuestros controladores terminaran todos en Controller.
-        //Por ej, la clase controladora Libros, será LibrosController
-        //Formamos el nombre del Controlador o en su defecto
-        // tomamos que es el de Libros_Controller        
-        if (!empty($_GET['controller'])) {
-            $controllerName = ucwords($_GET['controller']);
-        } else {
-            $controllerName = $config->get('DEFAULT_CONTROLLER');
-        }
-        //Creamos la ruta completa al controlador
-        $controller = $config->get('CONTROLLERS_NAMESPACE').$controllerName."Controller";
-        //Lo mismo sucede con las acciones, si no hay accion
-        //  tomamos index como accion
-        $action = $config->get('DEFAULT_ACTION');
-        if (!empty($_GET['action'])) {
-            $action = $_GET['action'];
-        }
+        /*
+         * Página de inicio 
+         */
+        Route::add('/(inicio)?',
+                fn() => (new \Com\Daw2\Controllers\InicioController())->index(),
+                'get');
         
-        if(!class_exists($controller)){
-            throw new \Exception('No existe la clase: ' . $config->get('CONTROLLERS_NAMESPACE').$controller);
-        }
+        /*
+         * Controlador de categorías
+         */
         
-        if (!is_callable(array($controller, $action))) {
-            throw new \Exception($controller . '->' . $action . ' no existe');
-        }
-
-        //Si todo esta bien, creamos una instancia del controlador
-        //  y llamamos a la accion
-        $controller = new $controller();
-        $controller->$action();
-    }
+        Route::add('/categoria',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->index(),
+                'get');
+        Route::add('/categoria/test-insert',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->insertCategoria(),
+                'get');
+        Route::add('/categoria/test-insert-object',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->insertCategoriaObject(),
+                'get');
+        //Cargamos el formulario de alta categoría
+        Route::add('/categoria/new',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->newShowForm(),
+                'get');
+        //Recibimos el formulario de alta categoría
+        Route::add('/categoria/new',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->newProcessForm(),
+                'post');
+        //Cargamos el formulario de editar categoría
+        Route::add('/categoria/edit/([0-9]+)',
+                fn($id) => (new \Com\Daw2\Controllers\CategoriaController())->editShowForm((int)$id),
+                'get');
+        //Recibimos el formulario de alta categoría
+        Route::add('/categoria/edit',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->editProcessForm(),
+                'post');
+        Route::add('/categoria/delete/([0-9]+)',
+                fn($id) => (new \Com\Daw2\Controllers\CategoriaController())->delete((int)$id),
+                'get');
+        
+        /*
+         * Controlador CSV
+         * */
+        Route::add('/csv',
+                function() {
+                    (new \Com\Daw2\Controllers\CsvController())->index();
+                },
+                'get');
+        Route::add('/csv/pontevedra2020',
+                function() {
+                    (new \Com\Daw2\Controllers\CsvController())->pontevedra2020();
+                },
+                'get');
+        
+        /*
+         * Controlador ejemplos test
+         */
+        //No emulado devuelve tipos float e int
+        Route::add('/test/index',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->index();
+                },
+                'get');
+        //Emulado devuelve todo strings
+        Route::add('/test/test-emulated',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->testEmulated();
+                },
+                'get');
+        Route::add('/test/insert-categoria',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->insertCategoria();
+                },
+                'get'); 
+        
+        Route::add('/test/update-usuario-salar',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->updateUsuarioSalar();
+                },
+                'get');
+        Route::add('/test/delete-usuarios',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->deleteUsuarios();
+                },
+                'get');
+        Route::add('/test/rellenar-aleatorio',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->rellenarAleatorio();
+                },
+                'get');
+        
+        Route::add('/test/test-limit',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->testLimit();
+                },
+                'get');
+        Route::add('/test/test-limit-bind',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->testLimitBind();
+                },
+                'get');
+        Route::add('/test/test-order-by',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->testOrderBy();
+                },
+                'get');
+        Route::add('/test/test-search-active',
+                function() {
+                    (new \Com\Daw2\Controllers\TestController())->testSearchActive();
+                },
+                'get');        
+        /*
+         * Métodos generales (fallback cuando no encontramos ruta
+         */
+        Route::pathNotFound(
+            fn() => (new \Com\Daw2\Controllers\ErrorController())->error404()
+        );
+        Route::methodNotAllowed(
+            fn() => (new \Com\Daw2\Controllers\ErrorController())->error404()
+        );
+        Route::run();       
+    }        
 
 }
