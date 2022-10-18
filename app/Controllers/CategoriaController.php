@@ -170,21 +170,27 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
     public function editShowForm(int $idCategoria){        
         $model = new \Com\Daw2\Models\CategoriaModel();        
         $categoria = $model->loadCategoria($idCategoria);
-        $categoriasList = $model->getAllCategorias();
-        //var_dump($categoriasList);
-        $_vars = array(
-            'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
-            'categoria' => $categoria,
-            'action' => 'edit',
-            'categoriaEdit' => $categoria,
-            'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
-            'categoriasList' => $categoriasList,                    
-            'breadcumb' => array(
-                'Inicio' => array('url' => '#', 'active' => false),
-                'Categoria' => array('url' => '?controller=categoria','active' => false),
-                'Editar' => array('url' => '#', 'active' => true)),                    
-            );
-        $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);           
+        if(!is_null($categoria)){
+            $categoriasList = $model->getAllCategorias();
+            //var_dump($categoriasList);
+            $_vars = array(
+                'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
+                'categoria' => $categoria,
+                'action' => 'edit',
+                'categoriaEdit' => $categoria,
+                'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
+                'categoriasList' => $categoriasList,                    
+                'breadcumb' => array(
+                    'Inicio' => array('url' => '#', 'active' => false),
+                    'Categoria' => array('url' => '?controller=categoria','active' => false),
+                    'Editar' => array('url' => '#', 'active' => true)),                    
+                );
+            $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);           
+        }
+        else{
+            $errorController = new \Com\Daw2\Controllers\ErrorController();
+            $errorController->error404();
+        }
     }
     
     public function editProcessForm(){

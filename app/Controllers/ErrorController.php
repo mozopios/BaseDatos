@@ -10,4 +10,5 @@ class ErrorController extends \Com\Daw2\Core\BaseController
                       'breadcumb' => array('Inicio' => array('url' => '#', 'active' => false)));
         $this->view->showViews(array('templates/header.view.php', '404.view.php', 'templates/footer.view.php'), $_vars);      
    }
+   
 }
