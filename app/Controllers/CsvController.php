@@ -12,8 +12,10 @@ class CsvController extends \Com\Daw2\Core\BaseController
                       'csv_div_titulo' => 'Por año y sexo',
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/csv.view.js')
             );
-                  
-        $csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra.csv');
+        //Puedo crear una constante a la carpeta data en el fichero .env a data y usarla         
+//        $csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra.csv');
+        //O puedo poner la ruta a mano
+        $csvModel = new \Com\Daw2\Models\CSVModel('../app/Data/poblacion_pontevedra.csv');
         $_vars["data"] = $csvModel->getPoblacionPontevedra();        
         $this->view->showViews(array('templates/header.view.php', 'csv.view.php', 'templates/footer.view.php'), $_vars);      
    }
@@ -26,8 +28,10 @@ class CsvController extends \Com\Daw2\Core\BaseController
                       'columnasMostrar' => array(0, 3),
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/csv.view.js')
             );
-                  
-        $csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra_2020_totales.csv');
+        //Puedo crear una constante a la carpeta data en el fichero .env a data y usarla                    
+        //$csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra_2020_totales.csv');
+        //O puedo poner la ruta a mano
+        $csvModel = new \Com\Daw2\Models\CSVModel('../app/Data/poblacion_pontevedra_2020_totales.csv');
         $_vars["data"] = $csvModel->getPoblacionPontevedra();        
         $this->view->showViews(array('templates/header.view.php', 'csv_personalizado.view.php', 'templates/footer.view.php'), $_vars);      
    }
