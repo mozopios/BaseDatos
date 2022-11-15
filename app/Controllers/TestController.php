@@ -97,7 +97,7 @@ class TestController extends \Com\Daw2\Core\BaseController{
         else{
             $asc = true;
         }
-        $order = isset($_GET['order']) ? $_GET['order'] : "";                    
+        $order = isset($_GET['order']) ? $_GET['order'] : "username";                    
         $_vars = array('titulo' => 'Test Order: ' . $order . ' ' . ( $asc ? 'ASC' : 'DESC'));
         $model = new \Com\Daw2\Models\TestModel();
         $_vars['usuarios'] = $model->getUsuarioOrderBy($order, $asc);
@@ -122,10 +122,10 @@ class TestController extends \Com\Daw2\Core\BaseController{
     }
     
     public function rellenarAleatorio(){
-        $_vars = array('titulo' => 'Test Limit Bind');
+        $_vars = array('titulo' => 'Relleno usuarios aleatorio');
         $model = new \Com\Daw2\Models\TestModel();
-        $_vars['usuariosUpdated'] = $model->rellenarAleatorio();
-        $this->view->showViews(array('templates/header.view.php', 'test.update.view.php', 'templates/footer.view.php'), $_vars);
+        $_vars['usuariosInserted'] = $model->rellenarAleatorio();
+        $this->view->showViews(array('templates/header.view.php', 'test.insert-masivo.view.php', 'templates/footer.view.php'), $_vars);
     }
     
     public function insertCategoria(){

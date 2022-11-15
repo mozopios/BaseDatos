@@ -13,7 +13,7 @@ class CsvController extends \Com\Daw2\Core\BaseController
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/csv.view.js')
             );
                   
-        $csvModel = new \Com\Daw2\Models\CSVModel(\Com\Daw2\Core\Config::getInstance()->get('DATA_FOLDER').'poblacion_pontevedra.csv');
+        $csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra.csv');
         $_vars["data"] = $csvModel->getPoblacionPontevedra();        
         $this->view->showViews(array('templates/header.view.php', 'csv.view.php', 'templates/footer.view.php'), $_vars);      
    }
@@ -27,7 +27,7 @@ class CsvController extends \Com\Daw2\Core\BaseController
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/csv.view.js')
             );
                   
-        $csvModel = new \Com\Daw2\Models\CSVModel(\Com\Daw2\Core\Config::getInstance()->get('DATA_FOLDER').'poblacion_pontevedra_2020_totales.csv');
+        $csvModel = new \Com\Daw2\Models\CSVModel($_ENV['folder.data'].'poblacion_pontevedra_2020_totales.csv');
         $_vars["data"] = $csvModel->getPoblacionPontevedra();        
         $this->view->showViews(array('templates/header.view.php', 'csv_personalizado.view.php', 'templates/footer.view.php'), $_vars);      
    }

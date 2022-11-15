@@ -20,18 +20,17 @@ class DBManager
     return self::$instance;
   }
   
-  public function getConnection (){
+  public function getConnection ($emulatePrepares = false){
     if (is_null($this->db)) {
-        $config = Config::getInstance();
-        $host = $config->get('dbhost');
-        $dbname = $config->get('dbname');
-        $dbuser = $config->get('dbuser');
-        $dbpass = $config->get('dbpass');
-        $charset = $config->get('dbcharset');
+        $host = $_ENV['db.host'];
+        $dbname = $_ENV['db.schema'];
+        $dbuser = $_ENV['db.user'];
+        $dbpass = $_ENV['db.pass'];
+        $charset = $_ENV['db.charset'];
         $options = [
           PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
           PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-          PDO::ATTR_EMULATE_PREPARES   => false,
+          PDO::ATTR_EMULATE_PREPARES   => $emulatePrepares,
         ];
         try{
             $this->db = new PDO("mysql:host=$host;dbname=$dbname;charset=$charset",

@@ -6,7 +6,31 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit6b281cd11a3e32fa4d426c8b7b5338df
 {
+    public static $files = array (
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
+        ),
+        'P' => 
+        array (
+            'PhpOption\\' => 10,
+        ),
+        'G' => 
+        array (
+            'GrahamCampbell\\ResultType\\' => 26,
+        ),
+        'D' => 
+        array (
+            'Dotenv\\' => 7,
+        ),
         'C' => 
         array (
             'Com\\Daw2\\' => 9,
@@ -14,6 +38,30 @@ class ComposerStaticInit6b281cd11a3e32fa4d426c8b7b5338df
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'PhpOption\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
+        'GrahamCampbell\\ResultType\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/graham-campbell/result-type/src',
+        ),
+        'Dotenv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
+        ),
         'Com\\Daw2\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -31,26 +79,12 @@ class ComposerStaticInit6b281cd11a3e32fa4d426c8b7b5338df
     );
 
     public static $classMap = array (
-        'Com\\Daw2\\Controllers\\CategoriaController' => __DIR__ . '/../..' . '/app/Controllers/CategoriaController.php',
-        'Com\\Daw2\\Controllers\\CsvController' => __DIR__ . '/../..' . '/app/Controllers/CsvController.php',
-        'Com\\Daw2\\Controllers\\InicioController' => __DIR__ . '/../..' . '/app/Controllers/InicioController.php',
-        'Com\\Daw2\\Controllers\\TestController' => __DIR__ . '/../..' . '/app/Controllers/TestController.php',
-        'Com\\Daw2\\Core\\BaseController' => __DIR__ . '/../..' . '/app/Core/BaseController.php',
-        'Com\\Daw2\\Core\\BaseModel' => __DIR__ . '/../..' . '/app/Core/BaseModel.php',
-        'Com\\Daw2\\Core\\Config' => __DIR__ . '/../..' . '/app/Core/Config.php',
-        'Com\\Daw2\\Core\\DBManager' => __DIR__ . '/../..' . '/app/Core/DBManager.php',
-        'Com\\Daw2\\Core\\FrontController' => __DIR__ . '/../..' . '/app/Core/FrontController.php',
-        'Com\\Daw2\\Core\\View' => __DIR__ . '/../..' . '/app/Core/View.php',
-        'Com\\Daw2\\Helpers\\ArgumentoNoValidoException' => __DIR__ . '/../..' . '/app/Helpers/ArgumentoNoValidoException.php',
-        'Com\\Daw2\\Helpers\\Categoria' => __DIR__ . '/../..' . '/app/Helpers/Categoria.php',
-        'Com\\Daw2\\Helpers\\Log' => __DIR__ . '/../..' . '/app/Helpers/Log.php',
-        'Com\\Daw2\\Helpers\\Mensaje' => __DIR__ . '/../..' . '/app/Helpers/Mensaje.php',
-        'Com\\Daw2\\Helpers\\Usuario' => __DIR__ . '/../..' . '/app/Helpers/Usuario.php',
-        'Com\\Daw2\\Models\\CSVModel' => __DIR__ . '/../..' . '/app/Models/CSVModel.php',
-        'Com\\Daw2\\Models\\CategoriaModel' => __DIR__ . '/../..' . '/app/Models/CategoriaModel.php',
-        'Com\\Daw2\\Models\\TestModel' => __DIR__ . '/../..' . '/app/Models/TestModel.php',
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Steampixel\\Route' => __DIR__ . '/..' . '/steampixel/simple-php-router/src/Steampixel/Route.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
