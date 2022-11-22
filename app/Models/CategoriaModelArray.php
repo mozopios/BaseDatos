@@ -18,44 +18,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 namespace Com\Daw2\Models;
 
 use \PDO;
 use Com\Daw2\Helpers\Categoria;
 /**
- * Diferentes test sobre la base de datos
+ * Modelo categoría manejo con arrays
  *
  * @author Rafael González Centeno
  */
-class CategoriaModel extends \Com\Daw2\Core\BaseModel{    
+class CategoriaModelArray extends \Com\Daw2\Core\BaseModel{
     
-    public function insertCategoriaObject(Categoria $c) : ?Categoria{        
-        $stmt = $this->pdo->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");        
-        //Si usamos isset va a dar error porque no llama al magic get
-        $idPadre = !is_null($c->padre) ? $c->padre->id : null;
-        if($stmt->execute(['nombre' => $c->nombre, 'id_padre' => $idPadre])){
-            //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-            return $this->loadCategoria($this->pdo->lastInsertId());
-        }
-        else{
-            return null;
-        }
+    public function insertCategoria(string $nombre, ?int $padre) : int{
+        $stmt = $this->pdo->prepare("INSERT INTO categoria (nombre_categoria, id_padre) VALUES (:nombre, :id_padre)");
+        $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre]);
+        //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
+        return $this->pdo->lastInsertId();
     }
-        
-    public function updateCategoriaObject(Categoria $c) : ?Categoria{
+    
+    public function updateCategoria(int $idCategoria, string $nombre, ?int $padre) : ?Categoria{
         $stmt = $this->pdo->prepare("UPDATE categoria SET nombre_categoria = :nombre, id_padre = :id_padre WHERE id_categoria = :id_categoria");
-        //Si usamos isset va a dar error porque no llama al magic get
-        $idPadre = !is_null($c->padre) ? $c->padre->id : null;
-        if($stmt->execute(['nombre' => $c->nombre, 'id_padre' => $idPadre, 'id_categoria' => $c->id])){
-            //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
-            return $c;
-        }
-        else{
-            return null;
-        }
+        $stmt->execute(['nombre' => $nombre, 'id_padre' => $padre, 'id_categoria' => $idCategoria]);
+        //Tras la realización de la inserción, solicitamos el id con el que se creó la categoría
+        return $this->pdo->lastInsertId();
     }
     
-    public function deleteCategoria(int $id) : bool{
+     public function deleteCategoria(int $id) : bool{
         $stmt = $this->pdo->prepare("DELETE FROM categoria WHERE id_categoria = ?");
         if($stmt->execute([$id])){
             return $stmt->rowCount() > 0;
@@ -70,17 +59,17 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
      * @param int $id Identificador de la categoría
      * @return Categoria|null Null si el identificador no existe. La Categoría en caso de existir.
      */
-    public function loadCategoria(int $id) : ?Categoria{
+    public function loadCategoria(int $id) : array{
         $stmt = $this->pdo->prepare("SELECT * FROM categoria WHERE id_categoria = ?");
         $stmt->execute([$id]);
         if($row = $stmt->fetch()){
-           return $this->rowToCategoria($row);
+           return $row;
         }        
         return null;
-    }        
+    }
     
     /*
-     * Obtención de listado con clases
+     * Con arrays
      */
     public function getAllCategorias() : array{
         $_res = array();
@@ -88,9 +77,10 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
         $stmt->execute();
         $_categorias = $stmt->fetchAll();
         foreach($_categorias as $c){
-            $actual = $this->rowToCategoria($c);
-            $_res[] = $actual;            
-            $_res = array_merge($_res, $this->getAllCategoriasHijas($actual->id));            
+            //Si tiene padre lo añadimos a la posición padre del array.
+            $categoria = $this->rowAddPadre($c);
+            $_res[] = $categoria;            
+            $_res = array_merge($_res, $this->getAllCategoriasHijas($c['id_categoria']));            
         }
         return $_res;
     }
@@ -100,20 +90,29 @@ class CategoriaModel extends \Com\Daw2\Core\BaseModel{
         $stmt->execute([$id_padre]);
         $_cats = $stmt->fetchAll();
         foreach($_cats as $c){
-            $actual = $this->rowToCategoria($c);
-            $_res[] = $actual;
-            $_res = array_merge($_res, $this->getAllCategoriasHijas($actual->id));
+            //Si tiene padre lo añadimos a la posición padre del array.
+            $categoria = $this->rowAddPadre($c);
+            $_res[] = $categoria;
+            $_res = array_merge($_res, $this->getAllCategoriasHijas($c['id_categoria']));
         }
         return $_res;
     }
     
-    private function rowToCategoria(array $row) : Categoria{
+    private function rowAddPadre(?array $row) : array{
         if (is_null($row['id_padre'])) {
-            $categoria = new Categoria($row['id_categoria'], NULL, $row['nombre_categoria']);
+            $row['padre'] = null;
         } else {
-            $categoria = new Categoria($row['id_categoria'], $this->loadCategoria($row['id_padre']), $row['nombre_categoria']);
+            $row['padre'] = $this->loadCategoria($row['id_padre']);            
         }
-        return $categoria;
+        //Calculamos full_name
+        $fullName = $row['nombre_categoria'];
+        $padre = $row['padre'];
+        while(!is_null($padre)){
+            $fullName = $padre['nombre_categoria'] . ' > ' . $fullName;
+            $padre = $padre['padre'];
+        }   
+        $row['fullName'] = htmlspecialchars($fullName);
+        return $row;
     }
     
 }

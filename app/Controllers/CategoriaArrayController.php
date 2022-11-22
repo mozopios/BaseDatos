@@ -27,7 +27,7 @@ use \Com\Daw2\Helpers\Mensaje;
  *
  * @author rafa
  */
-class CategoriaController extends \Com\Daw2\Core\BaseController{
+class CategoriaArrayController extends \Com\Daw2\Core\BaseController{
    
     public function __construct() {
         parent::__construct();
@@ -49,17 +49,18 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         $_vars = array('titulo' => 'Categorías',
                       'breadcumb' => array(
                         'Inicio' => array('url' => '#', 'active' => false),
-                        'Categorias (Object)' => array('url' => '#','active' => true)),
+                        'Categorias' => array('url' => '#','active' => true)),
                        'msg' => $msg,
-                      'Título' => 'Categorías',
+                      'Título' => 'Categorías (Array)',
                       'js' => array('plugins/datatables/jquery.dataTables.min.js', 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js', 'assets/js/pages/categoria.index.js')
             );
-        $model =  new \Com\Daw2\Models\CategoriaModel();      
+        $model =  new \Com\Daw2\Models\CategoriaModelArray();    
         $_vars["data"] = $model->getAllCategorias();
-        $this->view->showViews(array('templates/header.view.php', 'categoria.index.php', 'templates/footer.view.php'), $_vars);      
-    }            
+        $this->view->showViews(array('templates/header.view.php', 'categoria-array.index.php', 'templates/footer.view.php'), $_vars);      
+    }  
     
-    public function insertCategoriaObject(){
+    
+    public function insertCategoria(){
         if(isset($_GET['id_padre'])){
             $idPadre = filter_var($_GET['id_padre'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
             if(!is_null($idPadre) && $idPadre <= 0){
@@ -73,63 +74,54 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
             throw new \Exception("Se debe insertar el nombre de la categoría");
         }        
         else{
-            $_vars = array('titulo' => 'Insertar categoría Object');
+            $_vars = array('titulo' => 'Insertar categoría');
             $nombre = filter_var($_GET['nombre'], FILTER_SANITIZE_STRING);
             $_vars['nombre'] = $nombre;
             
             $model = new \Com\Daw2\Models\CategoriaModel();
-            $categoria = new \Com\Daw2\Helpers\Categoria(NULL, is_null($idPadre) ? NULL : $model->loadCategoria($idPadre), $nombre);
-                        
-            $_vars['categoria'] = $model->insertCategoriaObject($categoria);            
+            $_vars['id'] = $model->insertCategoria($nombre, $idPadre);            
             
             $this->view->showViews(array('templates/header.view.php', 'categoria.insert.view.php', 'templates/footer.view.php'), $_vars);
         }        
         
-    }
+    }  
     
     public function newShowForm(){  
-        $model = new \Com\Daw2\Models\CategoriaModel();
-        $categoria = \Com\Daw2\Helpers\Categoria::getStdClass();
+        $model = new \Com\Daw2\Models\CategoriaModelArray();
         $categoriasList = $model->getAllCategorias();
         //var_dump($categoriasList);
         $_vars = array(
-            'titulo' => 'Alta categoría (Object)', 
-            'categoria' => $categoria,
-            'categoriaEdit' => $categoria,
+            'titulo' => 'Alta categoría (Array)', 
             'action' => 'new',
-            'idPadre' => !is_null($categoria->padre) ? $categoria->padre->id : NULL,
             'categoriasList' => $categoriasList,
             'breadcumb' => array(
                 'Inicio' => array('url' => '#', 'active' => false),
                 'Categoria' => array('url' => '?controller=categoria','active' => false),
                 'Nueva' => array('url' => '#', 'active' => true))
             );
-        $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
+        $this->view->showViews(array('templates/header.view.php', 'categoria-array.edit.view.php', 'templates/footer.view.php'), $_vars);
     }
     
     public function newProcessForm(){
-        $model = new \Com\Daw2\Models\CategoriaModel();
+        $model = new \Com\Daw2\Models\CategoriaModelArray();
         $_errors = $this->checkForm($_POST, false);
             
         if(count($_errors) === 0){
-            $padre = ($_POST['id_padre'] > 0) ? $model->loadCategoria((int)$_POST['id_padre']) : NULL;
-            $categoria = new \Com\Daw2\Helpers\Categoria(NULL, $padre, filter_var($_POST['nombre'], FILTER_SANITIZE_SPECIAL_CHARS));
-            $categoria = $model->insertCategoriaObject($categoria); 
-            $mensaje = new \Com\Daw2\Helpers\Mensaje("success", "¡Categoría insertada!", "La categoría " . $categoria->getFullName() . " se ha insertado con éxito"); 
-            header('location: /categoria?msg='. base64_encode(json_encode($mensaje)));
+            $idPadre = ($_POST['id_padre'] > 0) ? (int)$_POST['id_padre'] : NULL;
+            $categoria = $model->insertCategoria($_POST['nombre_categoria'], $idPadre);
+            $mensaje = new \Com\Daw2\Helpers\Mensaje("success", "¡Categoría insertada!", "La categoría " . $_POST['nombre_categoria'] . " se ha insertado con éxito"); 
+            header('location: /categoria-array?msg='. base64_encode(json_encode($mensaje)));
             die;
         }
         else{                                
-            $std = $this->sanitizeForm($_POST);
+            $input = $this->sanitizeForm($_POST);
             $categoriasList = $model->getAllCategorias();
             //var_dump($categoriasList);
             $_vars = array(
-                'titulo' => 'Alta categoría (Object)' , 
-                'categoria' => $std,
-                'categoriaEdit' => $std,
+                'titulo' => 'Alta categoría (Array)' , 
+                'categoria' => $input,
                 'action' => 'new',
-                'errors' => $_errors,
-                'idPadre' => isset($std->id_padre) ? $std->id_padre : NULL,
+                'errors' => $_errors,                
                 'categoriasList' => $categoriasList,
                 'breadcumb' => array(
                     'Inicio' => array('url' => '#', 'active' => false),
@@ -137,7 +129,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
                     'Nueva' => array('url' => '#', 'active' => true))
                 );
 
-            $this->view->showViews(array('templates/header.view.php', 'categoria.edit.view.php', 'templates/footer.view.php'), $_vars);
+            $this->view->showViews(array('templates/header.view.php', 'categoria-array.edit.view.php', 'templates/footer.view.php'), $_vars);
         }
     }
     
@@ -148,7 +140,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
             $categoriasList = $model->getAllCategorias();
             //var_dump($categoriasList);
             $_vars = array(
-                'titulo' => 'Editar categoría (Object): '.htmlentities($categoria->getFullName()) , 
+                'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
                 'categoria' => $categoria,
                 'action' => 'edit',
                 'categoriaEdit' => $categoria,
@@ -186,7 +178,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
             $categoriasList = $model->getAllCategorias();
             //var_dump($categoriasList);
             $_vars = array(
-                'titulo' => 'Editar categoría (Object): '.htmlentities($categoria->getFullName()) , 
+                'titulo' => 'Editar categoría: '.htmlentities($categoria->getFullName()) , 
                 'categoria' => $categoria,
                 'action' => 'edit',
                 'categoriaEdit' => $std,
@@ -224,7 +216,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         }        
         finally{
             var_dump($mensaje);
-            header('location: /categoria?msg='. base64_encode(json_encode($mensaje)));
+            header('location: /categoria-array?msg='. base64_encode(json_encode($mensaje)));
         }
     }
     
@@ -243,11 +235,11 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
                 }
             }
         }
-        if(empty(trim($_data['nombre']))){
-            $_errors['nombre'] = 'Inserte un nombre de categoría';
+        if(empty(trim($_data['nombre_categoria']))){
+            $_errors['nombre_categoria'] = 'Inserte un nombre de categoría';
         }
-        else if(!preg_match('/^[a-zA-Z\s]$/', $_data['nombre'])){
-            $_errors['nombre'] = 'Sólo se permiten letras, números y espacios';
+        else if(!preg_match('/^[a-zA-Z\s]+$/', $_data['nombre_categoria'])){
+            $_errors['nombre_categoria'] = 'Sólo se permiten letras, números y espacios';
         }
         $idCategoria = filter_var($_data['id_categoria'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
         if($isEditing){
@@ -267,12 +259,7 @@ class CategoriaController extends \Com\Daw2\Core\BaseController{
         return $_errors;
     }
     
-    private function sanitizeForm(array $_data) : \stdClass{
-        $element = new \stdClass();
-        foreach($_data as $key => $value){
-            $element->$key = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
-        }
-        $element->id = $element->id_categoria;
-        return $element;
+    private function sanitizeForm(array $_data) : array{
+        return filter_var_array($_data, FILTER_SANITIZE_SPECIAL_CHARS);        
     }
 }

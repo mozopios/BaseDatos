@@ -20,11 +20,8 @@ class FrontController {
         
         Route::add('/categoria',
                 fn() => (new \Com\Daw2\Controllers\CategoriaController())->index(),
-                'get');
+                'get');        
         Route::add('/categoria/test-insert',
-                fn() => (new \Com\Daw2\Controllers\CategoriaController())->insertCategoria(),
-                'get');
-        Route::add('/categoria/test-insert-object',
                 fn() => (new \Com\Daw2\Controllers\CategoriaController())->insertCategoriaObject(),
                 'get');
         //Cargamos el formulario de alta categoría
@@ -45,6 +42,36 @@ class FrontController {
                 'post');
         Route::add('/categoria/delete/([0-9]+)',
                 fn($id) => (new \Com\Daw2\Controllers\CategoriaController())->delete((int)$id),
+                'get');
+        
+         /*
+         * Controlador de categorías Array
+         */
+        
+        Route::add('/categoria-array',
+                fn() => (new \Com\Daw2\Controllers\CategoriaArrayController())->index(),
+                'get');   
+        Route::add('/categoria-array/test-insert',
+                fn() => (new \Com\Daw2\Controllers\CategoriaArrayController())->insertCategoria(),
+                'get');
+        //Cargamos el formulario de alta categoría
+        Route::add('/categoria-array/new',
+                fn() => (new \Com\Daw2\Controllers\CategoriaArrayController())->newShowForm(),
+                'get');
+        //Recibimos el formulario de alta categoría
+        Route::add('/categoria-array/new',
+                fn() => (new \Com\Daw2\Controllers\CategoriaArrayController())->newProcessForm(),
+                'post');
+        //Cargamos el formulario de editar categoría
+        Route::add('/categoria/edit/([0-9]+)',
+                fn($id) => (new \Com\Daw2\Controllers\CategoriaController())->editShowForm((int)$id),
+                'get');
+        //Recibimos el formulario de alta categoría
+        Route::add('/categoria/edit',
+                fn() => (new \Com\Daw2\Controllers\CategoriaController())->editProcessForm(),
+                'post');
+        Route::add('/categoria-array/delete/([0-9]+)',
+                fn($id) => (new \Com\Daw2\Controllers\CategoriaArrayController())->delete((int)$id),
                 'get');
         
         /*
